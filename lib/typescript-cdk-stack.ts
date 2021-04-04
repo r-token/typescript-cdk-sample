@@ -1,5 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import { Bucket, BucketEncryption } from "@aws-cdk/aws-s3"
+import { Networking } from './networking'
 
 export class TypescriptCdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -19,6 +20,10 @@ export class TypescriptCdkStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
       value: bucket.bucketName,
       exportName: 'DocumentsBucketName'
+    })
+
+    new Networking(this, 'NetworkingConstruct', {
+      maxAzs: 2
     })
 
   }
