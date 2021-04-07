@@ -3,6 +3,8 @@ import { Bucket, BucketEncryption } from "@aws-cdk/aws-s3"
 import { Networking } from './networking'
 import { Tags } from '@aws-cdk/core';
 import { DocumentManagementAPI } from './api'
+import * as s3Deploy from '@aws-cdk/aws-s3-deployment'
+import * as path from 'path'
 
 export class TypescriptCdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -19,6 +21,14 @@ export class TypescriptCdkStack extends cdk.Stack {
       encryption: BucketEncryption.S3_MANAGED
     });
 
+    new s3Deploy.BucketDeployment(this, 'DocumentsDeployment', {
+      sources: [
+        s3Deploy.Source.asset(path.join(__dirname, '..', 'documents'))
+      ],
+      destinationBucket: bucket,
+      memoryLimit: 512
+    })
+
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
       value: bucket.bucketName,
       exportName: 'DocumentsBucketName'
@@ -30,7 +40,9 @@ export class TypescriptCdkStack extends cdk.Stack {
 
     Tags.of(networkingStack).add('Module', 'Networking')
 
-    const api = new DocumentManagementAPI(this, 'DocumentManagementAPI')
+    const api = new DocumentManagementAPI(this, 'DocumentManagementAPI', {
+      documentBucket: bucket
+    })
 
     Tags.of(api).add('Module', 'API')
 
