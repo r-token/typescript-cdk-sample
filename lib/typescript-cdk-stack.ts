@@ -21,6 +21,7 @@ export class TypescriptCdkStack extends cdk.Stack {
       encryption: BucketEncryption.S3_MANAGED
     });
 
+    // deploys items in the documents folder to S3
     new s3Deploy.BucketDeployment(this, 'DocumentsDeployment', {
       sources: [
         s3Deploy.Source.asset(path.join(__dirname, '..', 'documents'))
@@ -29,17 +30,20 @@ export class TypescriptCdkStack extends cdk.Stack {
       memoryLimit: 512
     })
 
+    // outputs the bucket name
     new cdk.CfnOutput(this, 'DocumentsBucketNameExport', {
       value: bucket.bucketName,
       exportName: 'DocumentsBucketName'
     })
 
+    // creates my VPC
     const networkingStack = new Networking(this, 'NetworkingConstruct', {
       maxAzs: 2
     })
 
     Tags.of(networkingStack).add('Module', 'Networking')
 
+    // creates my API Gateway
     const api = new DocumentManagementAPI(this, 'DocumentManagementAPI', {
       documentBucket: bucket
     })
