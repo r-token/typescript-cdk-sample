@@ -2,6 +2,7 @@ import * as cdk from '@aws-cdk/core';
 import { Bucket, BucketEncryption } from "@aws-cdk/aws-s3"
 import { Networking } from './networking'
 import { Tags } from '@aws-cdk/core';
+import { DocumentManagementAPI } from './api'
 
 export class TypescriptCdkStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -28,6 +29,10 @@ export class TypescriptCdkStack extends cdk.Stack {
     })
 
     Tags.of(networkingStack).add('Module', 'Networking')
+
+    const api = new DocumentManagementAPI(this, 'DocumentManagementAPI')
+
+    Tags.of(api).add('Module', 'API')
 
   }
 }
