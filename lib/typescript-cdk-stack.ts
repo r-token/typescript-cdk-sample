@@ -18,6 +18,7 @@ export class TypescriptCdkStack extends cdk.Stack {
     // // the Stack it exists in (this)
     // // the ID of the resource (the name of the bucket, DocumentsBucket)
     // // a properties object for different values that can be passed in (encryption, etc)
+    
     const bucket = new Bucket(this, 'DocumentsBucket', {
       encryption: BucketEncryption.S3_MANAGED
     });
